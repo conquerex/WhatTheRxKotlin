@@ -24,6 +24,9 @@ fun main(args: Array<String>) {
     for (i in 1..10) {
         println("$i output ${doSomeStuff(i)}")
     }
+
+    // ReactiveCalculator 클래스에 함수형 프로그래밍 적용
+
 }
 
 inline fun doSomeStuff(a: Int = 0) = a + (a * a)
