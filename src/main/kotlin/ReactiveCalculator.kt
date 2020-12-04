@@ -4,58 +4,58 @@
  */
 
 class ReactiveCalculator(a: Int, b: Int) {
-    internal val subjectAdd: io.reactivex.subjects.Subject<Pair<Int, Int>> =
+    private val subjectAdd: io.reactivex.subjects.Subject<Pair<Int, Int>> =
         io.reactivex.subjects.PublishSubject.create()
-    internal val subjectSub: io.reactivex.subjects.Subject<Pair<Int, Int>> =
+    private val subjectSub: io.reactivex.subjects.Subject<Pair<Int, Int>> =
         io.reactivex.subjects.PublishSubject.create()
-    internal val subjectMult: io.reactivex.subjects.Subject<Pair<Int, Int>> =
+    private val subjectMult: io.reactivex.subjects.Subject<Pair<Int, Int>> =
         io.reactivex.subjects.PublishSubject.create()
-    internal val subjectDiv: io.reactivex.subjects.Subject<Pair<Int, Int>> =
-        io.reactivex.subjects.PublishSubject.create()
-
-    internal val subjectCalc: io.reactivex.subjects.Subject<ReactiveCalculator> =
+    private val subjectDiv: io.reactivex.subjects.Subject<Pair<Int, Int>> =
         io.reactivex.subjects.PublishSubject.create()
 
-    internal var nums: Pair<Int, Int> = Pair(0, 0)
+    private val subjectCalc: io.reactivex.subjects.Subject<ReactiveCalculator> =
+        io.reactivex.subjects.PublishSubject.create()
+
+    private var nums: Pair<Int, Int> = Pair(0, 0)
 
     init {
         nums = Pair(a, b)
 
-        subjectAdd.map({ it.first + it.second }).subscribe({ println("Add = $it") })
-        subjectSub.map({ it.first - it.second }).subscribe({ println("Substract = $it") })
-        subjectMult.map({ it.first * it.second }).subscribe({ println("Multiply = $it") })
-        subjectDiv.map({ it.first / (it.second * 1.0) }).subscribe({ println("Divide = $it") })
+        subjectAdd.map { it.first + it.second }.subscribe { println("Add = $it") }
+        subjectSub.map { it.first - it.second }.subscribe { println("Substract = $it") }
+        subjectMult.map { it.first * it.second }.subscribe { println("Multiply = $it") }
+        subjectDiv.map { it.first / (it.second * 1.0) }.subscribe { println("Divide = $it") }
 
-        subjectCalc.subscribe({
+        subjectCalc.subscribe {
             with(it) {
                 calculateAddition()
                 calculateSubstraction()
                 calculateMultiplication()
                 calculateDivision()
             }
-        })
+        }
 
         subjectCalc.onNext(this)
     }
 
 
-    fun calculateAddition() {
+    private fun calculateAddition() {
         subjectAdd.onNext(nums)
     }
 
-    fun calculateSubstraction() {
+    private fun calculateSubstraction() {
         subjectSub.onNext(nums)
     }
 
-    fun calculateMultiplication() {
+    private fun calculateMultiplication() {
         subjectMult.onNext(nums)
     }
 
-    fun calculateDivision() {
+    private fun calculateDivision() {
         subjectDiv.onNext(nums)
     }
 
-    fun modifyNumbers(a: Int = nums.first, b: Int = nums.second) {
+    private fun modifyNumbers(a: Int = nums.first, b: Int = nums.second) {
         nums = Pair(a, b)
         subjectCalc.onNext(this)
 
