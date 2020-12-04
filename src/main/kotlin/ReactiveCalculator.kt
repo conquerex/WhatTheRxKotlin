@@ -1,30 +1,30 @@
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 /**
  * @author Jongkook
  * @date : 2020/12/04
  */
 
 class ReactiveCalculator(a: Int, b: Int) {
-    private val subjectAdd: io.reactivex.subjects.Subject<Pair<Int, Int>> =
-        io.reactivex.subjects.PublishSubject.create()
-    private val subjectSub: io.reactivex.subjects.Subject<Pair<Int, Int>> =
-        io.reactivex.subjects.PublishSubject.create()
-    private val subjectMult: io.reactivex.subjects.Subject<Pair<Int, Int>> =
-        io.reactivex.subjects.PublishSubject.create()
-    private val subjectDiv: io.reactivex.subjects.Subject<Pair<Int, Int>> =
-        io.reactivex.subjects.PublishSubject.create()
+//    private val subjectAdd: Subject<Pair<Int, Int>> = PublishSubject.create()
+//    private val subjectSub: Subject<Pair<Int, Int>> = PublishSubject.create()
+//    private val subjectMult: Subject<Pair<Int, Int>> = PublishSubject.create()
+//    private val subjectDiv: Subject<Pair<Int, Int>> = PublishSubject.create()
 
-    private val subjectCalc: io.reactivex.subjects.Subject<ReactiveCalculator> =
-        io.reactivex.subjects.PublishSubject.create()
+    private val subjectCalc: Subject<ReactiveCalculator> = PublishSubject.create()
 
-    private var nums: Pair<Int, Int> = Pair(0, 0)
+    var nums: Pair<Int, Int> = Pair(0, 0)
 
     init {
         nums = Pair(a, b)
 
-        subjectAdd.map { it.first + it.second }.subscribe { println("Add = $it") }
-        subjectSub.map { it.first - it.second }.subscribe { println("Substract = $it") }
-        subjectMult.map { it.first * it.second }.subscribe { println("Multiply = $it") }
-        subjectDiv.map { it.first / (it.second * 1.0) }.subscribe { println("Divide = $it") }
+//        subjectAdd.map { it.first + it.second }.subscribe { println("Add = $it") }
+//        subjectSub.map { it.first - it.second }.subscribe { println("Substract = $it") }
+//        subjectMult.map { it.first * it.second }.subscribe { println("Multiply = $it") }
+//        subjectDiv.map { it.first / (it.second * 1.0) }.subscribe { println("Divide = $it") }
 
         subjectCalc.subscribe {
             with(it) {
@@ -39,20 +39,32 @@ class ReactiveCalculator(a: Int, b: Int) {
     }
 
 
-    private fun calculateAddition() {
-        subjectAdd.onNext(nums)
+    inline fun calculateAddition(): Int {
+//        subjectAdd.onNext(nums)
+        val result = nums.first + nums.second
+        println("Add = $result")
+        return result
     }
 
-    private fun calculateSubstraction() {
-        subjectSub.onNext(nums)
+    private fun calculateSubstraction(): Int {
+//        subjectSub.onNext(nums)
+        val result = nums.first - nums.second
+        println("Substract = $result")
+        return result
     }
 
-    private fun calculateMultiplication() {
-        subjectMult.onNext(nums)
+    private fun calculateMultiplication(): Int {
+//        subjectMult.onNext(nums)
+        val result = nums.first * nums.second
+        println("Multiply = $result")
+        return result
     }
 
-    private fun calculateDivision() {
-        subjectDiv.onNext(nums)
+    private fun calculateDivision(): Double {
+//        subjectDiv.onNext(nums)
+        val result = (nums.first * 1.0) / (nums.second * 1.0)
+        println("Div = $result")
+        return result
     }
 
     private fun modifyNumbers(a: Int = nums.first, b: Int = nums.second) {
@@ -63,12 +75,12 @@ class ReactiveCalculator(a: Int, b: Int) {
 
     fun handleInput(inputLine: String?) {
         if (!inputLine.equals("exit")) {
-            val pattern: java.util.regex.Pattern = java.util.regex.Pattern.compile("([a|b])(?:\\s)?=(?:\\s)?(\\d*)");
+            val pattern: Pattern = Pattern.compile("([a|b])(?:\\s)?=(?:\\s)?(\\d*)");
 
             var a: Int? = null
             var b: Int? = null
 
-            val matcher: java.util.regex.Matcher = pattern.matcher(inputLine)
+            val matcher: Matcher = pattern.matcher(inputLine)
 
             if (matcher.matches() && matcher.group(1) != null && matcher.group(2) != null) {
                 if (matcher.group(1).toLowerCase().equals("a")) {
@@ -78,15 +90,12 @@ class ReactiveCalculator(a: Int, b: Int) {
                 }
             }
 
-
             when {
                 a != null && b != null -> modifyNumbers(a, b)
                 a != null -> modifyNumbers(a = a)
                 b != null -> modifyNumbers(b = b)
                 else -> println("Invalid Input")
-
             }
         }
     }
-
 }

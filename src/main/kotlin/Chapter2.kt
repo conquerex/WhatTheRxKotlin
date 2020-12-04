@@ -26,6 +26,14 @@ fun main(args: Array<String>) {
     }
 
     // ReactiveCalculator 클래스에 함수형 프로그래밍 적용
+    println("Initial Out put with a = 15, b = 10")
+    var cal = ReactiveCalculator(15, 10)
+    println("Enter a = <number> or b = <number> in separate lines\nexit to exit the program")
+    var line: String?
+    do {
+        line = readLine()
+        cal.handleInput(line)
+    } while (line != null && !line.toLowerCase().contains("exit"))
 
 }
 
