@@ -1,4 +1,8 @@
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 /**
  * @author Jongkook
@@ -30,11 +34,26 @@ fun main(args: Array<String>) {
     var cal = ReactiveCalculator(15, 10)
     println("Enter a = <number> or b = <number> in separate lines\nexit to exit the program")
     var line: String?
-    do {
-        line = readLine()
-        cal.handleInput(line)
-    } while (line != null && !line.toLowerCase().contains("exit"))
+//    do {
+//        line = readLine()
+//        cal.handleInput(line)
+//    } while (line != null && !line.toLowerCase().contains("exit"))
 
+    // 코루틴 시작하기
+    runBlocking {
+        val exeTime = longRunningTask()
+        println("Execution Time is $exeTime")
+    }
+}
+
+suspend fun longRunningTask(): Long {
+    val time = measureTimeMillis {
+        println("Plz wail....")
+//        delay(2, TimeUnit.SECONDS) // 왜 안되지???
+        delay(2000)
+        println("Delay over...")
+    }
+    return time
 }
 
 inline fun doSomeStuff(a: Int = 0) = a + (a * a)
