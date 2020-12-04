@@ -1,5 +1,7 @@
-import kotlinx.coroutines.*
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
@@ -40,8 +42,8 @@ fun main(args: Array<String>) {
 
     // 코루틴 시작하기
     runBlocking {
-        val exeTime = longRunningTask()
-        println("Execution Time is $exeTime")
+//        val exeTime = longRunningTask()
+//        println("Execution Time is $exeTime")
     }
 
     // 코루틴 시작하기 - 비동기
@@ -52,8 +54,25 @@ fun main(args: Array<String>) {
 
     println("***** Print after async")
     runBlocking {
-        println("***** Printing time ${time2.await()}")
+//        println("***** Printing time ${time2.await()}")
     }
+
+    // 시퀀스 생성하기 - 피보나치 프로그램
+    val fibonacciSeries = sequence<Int> {
+        var a = 0
+        var b = 1
+        yield(a)
+        yield(b)
+
+        while (true) {
+            val c = a + b
+            yield(c)
+            a = b
+            b = c
+        }
+    }
+
+    println(fibonacciSeries.take(10).joinToString(","))
 }
 
 suspend fun longRunningTask(): Long {
