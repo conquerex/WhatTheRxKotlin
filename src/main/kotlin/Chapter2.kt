@@ -1,5 +1,4 @@
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
@@ -44,11 +43,22 @@ fun main(args: Array<String>) {
         val exeTime = longRunningTask()
         println("Execution Time is $exeTime")
     }
+
+    // 코루틴 시작하기 - 비동기
+    val time2 = GlobalScope.async {
+        println("********************")
+        longRunningTask()
+    }
+
+    println("***** Print after async")
+    runBlocking {
+        println("***** Printing time ${time2.await()}")
+    }
 }
 
 suspend fun longRunningTask(): Long {
     val time = measureTimeMillis {
-        println("Plz wail....")
+        println("Plz wait....")
 //        delay(2, TimeUnit.SECONDS) // 왜 안되지???
         delay(2000)
         println("Delay over...")
