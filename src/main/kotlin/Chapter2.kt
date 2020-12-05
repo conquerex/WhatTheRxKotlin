@@ -73,6 +73,19 @@ fun main(args: Array<String>) {
     }
 
     println(fibonacciSeries.take(10).joinToString(","))
+
+    // 코루틴을 사용한 ReactiveCalculator 클래스
+    println("Initial Out put with a = 10, b = 4")
+    var cal2 = ReactiveCalculator(10, 4)
+    println("Enter a = <number> or b = <number> in separate lines\nexit to exit the program")
+    var line2: String?
+    do {
+        line2 = readLine()
+        GlobalScope.async {
+            cal2.handleInput(line2)
+        }
+    } while (line2 != null && !line2.toLowerCase().contains("exit"))
+
 }
 
 suspend fun longRunningTask(): Long {

@@ -45,7 +45,7 @@ fun main(args: Array<String>) {
     var line: String?
     do {
         line = readLine()
-        calculator.handleInput(line)
+//        calculator.handleInput(line)
     } while (line != null && !line.toLowerCase().contains("exit"))
 
 }
