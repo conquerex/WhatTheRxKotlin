@@ -1,3 +1,5 @@
+import io.reactivex.Maybe
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -79,13 +81,27 @@ fun main(args: Array<String>) {
     var cal2 = ReactiveCalculator(10, 4)
     println("Enter a = <number> or b = <number> in separate lines\nexit to exit the program")
     var line2: String?
-    do {
-        line2 = readLine()
-        GlobalScope.async {
-            cal2.handleInput(line2)
-        }
-    } while (line2 != null && !line2.toLowerCase().contains("exit"))
+//    do {
+//        line2 = readLine()
+//        GlobalScope.async {
+//            cal2.handleInput(line2)
+//        }
+//    } while (line2 != null && !line2.toLowerCase().contains("exit"))
 
+    // 함수형 프로그래밍: 모나드
+    val maybeValue = Maybe.just(14)
+    maybeValue.subscribeBy(
+        onComplete = { println("Completed Empty") },
+        onError = { println("Error $it") },
+        onSuccess = { println("value $it") }
+    )
+
+    val maybeEmpty = Maybe.empty<Int>()
+    maybeEmpty.subscribeBy(
+        onComplete = { println("Completed Empty") },
+        onError = { println("Error $it") },
+        onSuccess = { println("value $it") }
+    )
 }
 
 suspend fun longRunningTask(): Long {
