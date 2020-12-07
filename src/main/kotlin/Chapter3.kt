@@ -102,13 +102,15 @@ fun main(args: Array<String>) {
 
     observable3.subscribe(ob)
 
-    println("""
+    println(
+        """
         
         ******************************
         Observable.from 메서드 이해
         ******************************
         
-    """.trimIndent())
+    """.trimIndent()
+    )
 
     val observer4 = object : Observer<String> {
         override fun onSubscribe(d: Disposable) {
@@ -150,13 +152,15 @@ fun main(args: Array<String>) {
     val observableFromFuture = Observable.fromFuture(future)
     observableFromFuture.subscribe(observer4)
 
-    println("""
+    println(
+        """
         
         ******************************
         toObservable의 확장 함수 이해
         ******************************
         
-    """.trimIndent())
+    """.trimIndent()
+    )
     val observer5 = object : Observer<String> {
         override fun onSubscribe(d: Disposable) {
             println("New Subscription ")
@@ -179,13 +183,46 @@ fun main(args: Array<String>) {
     val observable5 = myList.toObservable()
     observable5.subscribe(observer5)
 
-    println("""
+    println(
+        """
         
         ******************************
         Observable.just 메서드 이해
         ******************************
         
-    """.trimIndent())
+    """.trimIndent()
+    )
 
+    val observer6 = object : Observer<Any> {
+        override fun onSubscribe(d: Disposable) {
+            println("New Subscription ")
+        }
 
+        override fun onNext(t: Any) {
+            println("Next >> $t")
+        }
+
+        override fun onError(e: Throwable) {
+            println("Error occured >> ${e.message}")
+        }
+
+        override fun onComplete() {
+            println("All completed")
+        }
+    }
+
+    Observable.just("A String").subscribe(observer6)
+    Observable.just(345).subscribe(observer6)
+    Observable.just(
+        listOf("String 7", "String 8", "String 11", "String 22")
+    ).subscribe(observer6)
+    Observable.just(
+        mapOf(
+            Pair("key 1", "value 1"),
+            Pair("key 2", "value 3"),
+            Pair("key 9", "value 9")
+        )
+    ).subscribe(observer6)
+    Observable.just(arrayListOf(3, 4, 7, 8, 9)).subscribe(observer6)
+    Observable.just("aa", "bbb", "ggg").subscribe(observer6)
 }
