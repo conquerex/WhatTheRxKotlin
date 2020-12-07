@@ -2,6 +2,9 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
+import java.util.concurrent.Callable
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Jongkook
@@ -50,16 +53,18 @@ fun main(args: Array<String>) {
 
     observableOnList.subscribe(observer)
 
-    println("""
+    println(
+        """
         
         ******************************
         Observable.create 메서드 이해
         ******************************
         
-    """.trimIndent())
+    """.trimIndent()
+    )
 
     // Observer 생성
-    val ob = object: Observer<String> {
+    val ob = object : Observer<String> {
         override fun onSubscribe(d: Disposable) {
             println("New Subscription ")
         }
@@ -104,4 +109,53 @@ fun main(args: Array<String>) {
         ******************************
         
     """.trimIndent())
+
+    val observer4 = object : Observer<String> {
+        override fun onSubscribe(d: Disposable) {
+            println("New Subscription ")
+        }
+
+        override fun onNext(t: String) {
+            println("Next >> $t")
+        }
+
+        override fun onError(e: Throwable) {
+            println("Error occured >> ${e.message}")
+        }
+
+        override fun onComplete() {
+            println("All completed")
+        }
+    }
+
+    val list = listOf("String 1", "String 2", "String 3", "String 7")
+    val observableFromIterable = Observable.fromIterable(list)
+    observableFromIterable.subscribe(observer4)
+
+    val callable = Callable { "From Callable" }
+    val observableFromCallable = Observable.fromCallable(callable)
+    observableFromCallable.subscribe(observer4)
+
+    val future = object : Future<String> {
+        override fun cancel(p0: Boolean): Boolean = false
+
+        override fun isCancelled(): Boolean = false
+
+        override fun isDone(): Boolean = true
+
+        override fun get(): String = "Hello From future / get()"
+
+        override fun get(p0: Long, p1: TimeUnit): String = "Hello From future / get(p0, p1)"
+    }
+    val observableFromFuture = Observable.fromFuture(future)
+    observableFromFuture.subscribe(observer4)
+
+    println("""
+        
+        ******************************
+        toObservable의 확장 함수 이해
+        ******************************
+        
+    """.trimIndent())
+
 }
