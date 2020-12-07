@@ -157,5 +157,35 @@ fun main(args: Array<String>) {
         ******************************
         
     """.trimIndent())
+    val observer5 = object : Observer<String> {
+        override fun onSubscribe(d: Disposable) {
+            println("New Subscription ")
+        }
+
+        override fun onNext(t: String) {
+            println("Next >> $t")
+        }
+
+        override fun onError(e: Throwable) {
+            println("Error occured >> ${e.message}")
+        }
+
+        override fun onComplete() {
+            println("All completed")
+        }
+    }
+
+    val myList = listOf("String 4", "String 5", "String 11", "String 22")
+    val observable5 = myList.toObservable()
+    observable5.subscribe(observer5)
+
+    println("""
+        
+        ******************************
+        Observable.just 메서드 이해
+        ******************************
+        
+    """.trimIndent())
+
 
 }
