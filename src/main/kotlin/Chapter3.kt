@@ -9,7 +9,9 @@ import io.reactivex.rxkotlin.toObservable
  */
 
 fun main(args: Array<String>) {
-    // 옵저버블이 동작하는 방법
+    /**
+     * 옵저버블이 동작하는 방법
+     */
     val observer = object : Observer<Any> { // Observer 인스턴스를 Any 타입으로 지정
         override fun onComplete() {
             // observable이 오류없이 모든 아이템을 처리하면 호출
@@ -47,4 +49,59 @@ fun main(args: Array<String>) {
     )
 
     observableOnList.subscribe(observer)
+
+    println("""
+        
+        ******************************
+        Observable.create 메서드 이해
+        ******************************
+        
+    """.trimIndent())
+
+    // Observer 생성
+    val ob = object: Observer<String> {
+        override fun onSubscribe(d: Disposable) {
+            println("New Subscription ")
+        }
+
+        override fun onNext(t: String) {
+            println("Next $t")
+        }
+
+        override fun onError(e: Throwable) {
+            println("Error occured ${e.message}")
+        }
+
+        override fun onComplete() {
+            println("All completed")
+        }
+    }
+
+    val observable2 = Observable.create<String> {
+        it.onNext("Emit 1")
+        it.onNext("Emit 2")
+        it.onNext("Emit 3")
+        it.onNext("Emit 5")
+        it.onComplete()
+    }
+
+    observable2.subscribe(ob)
+
+    val observable3 = Observable.create<String> {
+        it.onNext("Emit 2")
+        it.onNext("Emit 3")
+        it.onNext("Emit 5")
+        it.onNext("Emit 6")
+        it.onError(Exception("My custom exception"))
+    }
+
+    observable3.subscribe(ob)
+
+    println("""
+        
+        ******************************
+        Observable.from 메서드 이해
+        ******************************
+        
+    """.trimIndent())
 }
