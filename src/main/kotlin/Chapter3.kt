@@ -2,6 +2,8 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -225,4 +227,42 @@ fun main(args: Array<String>) {
     ).subscribe(observer6)
     Observable.just(arrayListOf(3, 4, 7, 8, 9)).subscribe(observer6)
     Observable.just("aa", "bbb", "ggg").subscribe(observer6)
+
+    println(
+        """
+        
+        ******************************
+        Observable의 다른 팩토리 메서드
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val observer7 = object : Observer<Any> {
+        override fun onSubscribe(d: Disposable) {
+            println("New Subscription ")
+        }
+
+        override fun onNext(t: Any) {
+            println("Next >> $t")
+        }
+
+        override fun onError(e: Throwable) {
+            println("Error occured >> ${e.message}")
+        }
+
+        override fun onComplete() {
+            println("All completed")
+        }
+    }
+
+    Observable.range(1, 10).subscribe(observer7)
+    Observable.empty<String>().subscribe(observer7)
+
+    runBlocking {
+        Observable.interval(300, TimeUnit.MILLISECONDS).subscribe(observer7)
+        delay(1400)
+        Observable.timer(400, TimeUnit.MILLISECONDS).subscribe(observer7)
+        delay(400)
+    }
 }
