@@ -265,4 +265,130 @@ fun main(args: Array<String>) {
         Observable.timer(400, TimeUnit.MILLISECONDS).subscribe(observer7)
         delay(400)
     }
+
+    println(
+        """
+        
+        ******************************
+        구독과 해지        
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val observable8 = Observable.range(1, 5)
+
+    observable8.subscribe(
+        { println("Next >> $it") },
+        { println("Error occured >> ${it.message}") },
+        { println("Done") },
+        { println("[ New Subscription ]") }
+    )
+
+    val observer8 = object : Observer<Int> {
+        override fun onSubscribe(d: Disposable) {
+            println("[ New Subscription ]")
+        }
+
+        override fun onNext(t: Int) {
+            println("Next >> $t")
+        }
+
+        override fun onError(e: Throwable) {
+            println("Error occured >> ${e.message}")
+        }
+
+        override fun onComplete() {
+            println("All completed")
+        }
+    }
+    observable8.subscribe(observer8)
+
+    // Disposable 인터페이스의 인스턴스를 사용해 주어진 시간에 배출을 멈출 수 있다.
+    runBlocking {
+        val observable = Observable.interval(100, TimeUnit.MILLISECONDS)
+        val observer = object : Observer<Long> {
+
+            lateinit var disposable: Disposable
+
+            override fun onNext(t: Long) {
+                println("Received $t")
+                if (t >= 10 && !disposable.isDisposed) {
+                    disposable.dispose()
+                    println("Disposed")
+                }
+            }
+
+            override fun onError(e: Throwable) {
+                println("Error occured >> ${e.message}")
+            }
+
+            override fun onComplete() {
+                println("All completed")
+            }
+
+            override fun onSubscribe(d: Disposable) {
+                disposable = d
+                println("[ New Subscription ]")
+            }
+        }
+
+        observable.subscribe(observer)
+        delay(1400)
+    }
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
+
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
+
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
+
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
+
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
+
 }
