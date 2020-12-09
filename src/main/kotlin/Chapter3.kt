@@ -2,6 +2,7 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Callable
@@ -341,23 +342,83 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        콜드 옵저버블
         ******************************
         
     """.trimIndent()
     )
 
+    val oble = listOf("aaa", "ccc", "eeee", "hhhh").toObservable()
+    oble.subscribe(
+        { println("Next >> $it") },
+        { println("Error occured >> ${it.message}") },
+        { println("Done") },
+        { println("[ New Subscription ]") })
+
+    oble.subscribe(
+        { println("Next >> $it") },
+        { println("Error occured >> ${it.message}") },
+        { println("Done") },
+        { println("[ New Subscription ] 2") }
+    )
 
     println(
         """
         
         ******************************
-        
+        핫 옵저버블
         ******************************
         
     """.trimIndent()
     )
+/*
+    val connectableObservable = listOf("qwww", "weee", "errr", "rtt").toObservable().publish()
+    connectableObservable.subscribe {
+        println("Subcription 1 : $it")
+    }
+    connectableObservable.map(String::reversed).subscribe {
+        println("Subcription 2 : $it")
+    }
+    connectableObservable.connect()
+    connectableObservable.subscribe {
+        println("Subcription 3 : $it")
+    }
 
+    val connObservable = Observable.interval(100, TimeUnit.MILLISECONDS).publish()
+    connObservable.subscribe {
+        println("Subcription 1 > $it")
+    }
+    connObservable.subscribe {
+        println("Subcription 2 > $it")
+    }
+    connObservable.connect()
+    runBlocking {
+        delay(500)
+    }
+    connObservable.subscribe {
+        println("Subcription 3 > $it")
+    }
+    runBlocking {
+        delay(400)
+    }
+*/
+
+    // Subjects
+    val subjectObservable = Observable.interval(100, TimeUnit.MILLISECONDS)
+    val subject = PublishSubject.create<Long>()
+    subjectObservable.subscribe(subject)
+    subject.subscribe {
+        println("Received 1 >> $it")
+    }
+    runBlocking {
+        delay(300)
+    }
+    subject.subscribe {
+        println("Received 2 >> $it")
+    }
+    runBlocking {
+        delay(200)
+    }
 
     println(
         """
