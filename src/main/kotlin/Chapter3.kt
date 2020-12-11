@@ -5,6 +5,7 @@ import io.reactivex.rxkotlin.toObservable
 import io.reactivex.subjects.AsyncSubject
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.ReplaySubject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Callable
@@ -479,24 +480,46 @@ fun main(args: Array<String>) {
     )
 
     subject2.onNext(8)
+    subject2.onNext(9)
     subject2.subscribe(
         { println("2 Next  >> $it") },
         { println("2 Error >> ${it.printStackTrace()}") },
         { println("2 Done  <<") }
     )
-
+    subject2.onNext(10)
+    subject2.onNext(11)
     subject2.onComplete()
 
     println(
         """
         
         ******************************
-        
+        ReplaySubject 이해
         ******************************
         
     """.trimIndent()
     )
 
+    val subject3 = ReplaySubject.create<Int>()
+    subject3.onNext(5)
+    subject3.onNext(6)
+    subject3.onNext(7)
+    subject3.subscribe(
+        { println("1 Next  >> $it") },
+        { println("1 Error >> ${it.printStackTrace()}") },
+        { println("1 Done  <<") }
+    )
+
+    subject3.onNext(8)
+    subject3.onNext(9)
+    subject3.subscribe(
+        { println("2 Next  >> $it") },
+        { println("2 Error >> ${it.printStackTrace()}") },
+        { println("2 Done  <<") }
+    )
+    subject3.onNext(10)
+    subject3.onNext(11)
+    subject3.onComplete()
 
     println(
         """
