@@ -2,6 +2,7 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
+import io.reactivex.subjects.AsyncSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -407,18 +408,62 @@ fun main(args: Array<String>) {
     val subjectObservable = Observable.interval(100, TimeUnit.MILLISECONDS)
     val subject = PublishSubject.create<Long>()
     subjectObservable.subscribe(subject)
-    subject.subscribe {
-        println("Received 1 >> $it")
-    }
-    runBlocking {
-        delay(300)
-    }
-    subject.subscribe {
-        println("Received 2 >> $it")
-    }
-    runBlocking {
-        delay(200)
-    }
+    // 다른 처리를 빨리 진햋위해 아래 수행을 주석처리
+//    subject.subscribe {
+//        println("Received 1 >> $it")
+//    }
+//    runBlocking {
+//        delay(300)
+//    }
+//    subject.subscribe {
+//        println("Received 2 >> $it")
+//    }
+//    runBlocking {
+//        delay(200)
+//    }
+
+    println(
+        """
+        
+        ******************************
+        AsuncSubject
+        ******************************
+        
+    """.trimIndent()
+    )
+
+//    val oble1 = Observable.just(1, 2, 4, 5)
+    val subject1 = AsyncSubject.create<Int>()
+    subject1.onNext(8)
+    subject1.onNext(9)
+    subject1.onNext(0)
+    // subject와 함께 옵저버블 인스턴스에 가입한 다음
+//    oble1.subscribe(subject1)
+    // Subject 인스턴스에 람다를 사용해 가입
+    subject1.subscribe(
+        { println("1 Next  >> $it") },
+        { println("1 Error >> ${it.printStackTrace()}") },
+        { println("1 Done  <<") }
+    )
+    subject1.onNext(11)
+    subject1.onNext(12)
+    subject1.subscribe(
+        { println("2 Next  >> $it") },
+        { println("2 Error >> ${it.printStackTrace()}") },
+        { println("2 Done  <<") }
+    )
+    subject1.onComplete()
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
+
 
     println(
         """
