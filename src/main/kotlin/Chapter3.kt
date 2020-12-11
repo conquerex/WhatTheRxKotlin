@@ -3,6 +3,7 @@ import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.subjects.AsyncSubject
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -261,12 +262,13 @@ fun main(args: Array<String>) {
     Observable.range(1, 10).subscribe(observer7)
     Observable.empty<String>().subscribe(observer7)
 
-    runBlocking {
-        Observable.interval(300, TimeUnit.MILLISECONDS).subscribe(observer7)
-        delay(1400)
-        Observable.timer(400, TimeUnit.MILLISECONDS).subscribe(observer7)
-        delay(400)
-    }
+    // 다른 처리를 빨리 진햋위해 아래 수행을 주석처리
+//    runBlocking {
+//        Observable.interval(300, TimeUnit.MILLISECONDS).subscribe(observer7)
+//        delay(1400)
+//        Observable.timer(400, TimeUnit.MILLISECONDS).subscribe(observer7)
+//        delay(400)
+//    }
 
     println(
         """
@@ -335,8 +337,9 @@ fun main(args: Array<String>) {
             }
         }
 
-        observable.subscribe(observer)
-        delay(1400)
+        // 다른 처리를 빨리 진햋위해 아래 수행을 주석처리
+//        observable.subscribe(observer)
+//        delay(1400)
     }
 
     println(
@@ -458,12 +461,31 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        BehaviorSubject
         ******************************
         
     """.trimIndent()
     )
 
+    val subject2 = BehaviorSubject.create<Int>()
+    subject2.onNext(4)
+    subject2.onNext(5)
+    subject2.onNext(6)
+    subject2.onNext(7)
+    subject2.subscribe(
+        { println("1 Next  >> $it") },
+        { println("1 Error >> ${it.printStackTrace()}") },
+        { println("1 Done  <<") }
+    )
+
+    subject2.onNext(8)
+    subject2.subscribe(
+        { println("2 Next  >> $it") },
+        { println("2 Error >> ${it.printStackTrace()}") },
+        { println("2 Done  <<") }
+    )
+
+    subject2.onComplete()
 
     println(
         """
