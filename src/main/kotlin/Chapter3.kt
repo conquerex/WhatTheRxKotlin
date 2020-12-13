@@ -520,26 +520,4 @@ fun main(args: Array<String>) {
     subject3.onNext(10)
     subject3.onNext(11)
     subject3.onComplete()
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
 }
