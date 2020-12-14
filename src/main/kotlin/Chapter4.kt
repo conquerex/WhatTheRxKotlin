@@ -4,6 +4,8 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 
 /**
  * @author Jongkook
@@ -78,18 +80,91 @@ fun main(args: Array<String>) {
 //        })
 //    runBlocking { delay(10000) }
 
-    Flowable.range(1, 1000)
+//    Flowable.range(1, 1000)
+//        .map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe({
+//            print("Received $it\t")
+//            runBlocking {
+//                delay(50)
+//            }
+//        }, {
+//            it.printStackTrace()
+//        })
+//    runBlocking { delay(5000) }
+
+
+    println(
+        """
+        
+        ******************************
+        플로어블과 구독자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+
+//    Flowable.range(1, 1000)
+//        .map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe(object : Subscriber<MyItem> {
+//            override fun onSubscribe(s: Subscription?) {
+//                s!!.request(Long.MAX_VALUE)
+//            }
+//
+//            override fun onNext(t: MyItem?) {
+//                runBlocking { delay(50) }
+//                println("Subscriber received + $t")
+//            }
+//
+//            override fun onError(t: Throwable?) {
+//                t!!.printStackTrace()
+//            }
+//
+//            override fun onComplete() {
+//                println("Done!!!")
+//                runBlocking {
+//                    delay(5000)
+//                }
+//            }
+//        })
+
+
+    Flowable.range(1, 15)
         .map { MyItem(it) }
         .observeOn(Schedulers.io())
-        .subscribe({
-            print("Received $it\t")
-            runBlocking {
-                delay(50)
+        .subscribe(object : Subscriber<MyItem> {
+
+            lateinit var subscription: Subscription
+
+            override fun onSubscribe(s: Subscription?) {
+                this.subscription = s!!
+                subscription.request(5)
             }
-        }, {
-            it.printStackTrace()
+
+            override fun onNext(t: MyItem?) {
+                runBlocking {
+                    delay(50)
+                }
+
+                println("Subscriber received $t")
+                if (t!!.id == 5) {
+                    println("Requesting two more")
+                    subscription.request(2)
+                }
+            }
+
+            override fun onError(t: Throwable?) {
+                t!!.printStackTrace()
+            }
+
+            override fun onComplete() {
+                println("Done!!!")
+            }
         })
-    runBlocking { delay(5000) }
+
+    runBlocking { delay(2000) }
 
 
     println(
@@ -101,6 +176,8 @@ fun main(args: Array<String>) {
         
     """.trimIndent()
     )
+
+
     println(
         """
         
@@ -110,15 +187,8 @@ fun main(args: Array<String>) {
         
     """.trimIndent()
     )
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
+
+
     println(
         """
         
