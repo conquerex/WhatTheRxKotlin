@@ -180,74 +180,84 @@ fun main(args: Array<String>) {
     """.trimIndent()
     )
 
-    val observer2 = object : Observer<Int> {
-        override fun onSubscribe(d: Disposable) {
-            println("[ New Subscription ]")
-        }
-
-        override fun onNext(t: Int) {
-            println("Next >> $t")
-        }
-
-        override fun onError(e: Throwable) {
-            println("Error occured >> ${e.message}")
-        }
-
-        override fun onComplete() {
-            println("All completed")
-        }
-    } // Observer 생성
-
-    val observable2 = Observable.create<Int> {
-        for (i in 1..10) {
-            it.onNext(i)
-        }
-        it.onComplete()
-    }
-
-//    observable2.subscribe(observer2)
-
-    val subscriber2 = object : Subscriber<Int> {
-        override fun onSubscribe(s: Subscription?) {
-            println("[ New Subscription ]")
-            s!!.request(10)
-        }
-
-        override fun onNext(t: Int) {
-            println("Next >> $t")
-        }
-
-        override fun onError(e: Throwable) {
-            println("Error occured >> ${e.message}")
-        }
-
-        override fun onComplete() {
-            println("All completed")
-        }
-    }
-
-    val flowable = Flowable.create<Int> ({
-        for (i in 1..10) {
-            it.onNext(i)
-        }
-        it.onComplete()
-    }, BackpressureStrategy.BUFFER)
-
-    flowable.observeOn(Schedulers.io())
-        .subscribe(subscriber2)
-
-    runBlocking { delay(3000) }
+//    val observer2 = object : Observer<Int> {
+//        override fun onSubscribe(d: Disposable) {
+//            println("[ New Subscription ]")
+//        }
+//
+//        override fun onNext(t: Int) {
+//            println("Next >> $t")
+//        }
+//
+//        override fun onError(e: Throwable) {
+//            println("Error occured >> ${e.message}")
+//        }
+//
+//        override fun onComplete() {
+//            println("All completed")
+//        }
+//    } // Observer 생성
+//
+//    val observable2 = Observable.create<Int> {
+//        for (i in 1..10) {
+//            it.onNext(i)
+//        }
+//        it.onComplete()
+//    }
+//
+////    observable2.subscribe(observer2)
+//
+//    val subscriber2 = object : Subscriber<Int> {
+//        override fun onSubscribe(s: Subscription?) {
+//            println("[ New Subscription ]")
+//            s!!.request(10)
+//        }
+//
+//        override fun onNext(t: Int) {
+//            println("Next >> $t")
+//        }
+//
+//        override fun onError(e: Throwable) {
+//            println("Error occured >> ${e.message}")
+//        }
+//
+//        override fun onComplete() {
+//            println("All completed")
+//        }
+//    }
+//
+//    val flowable = Flowable.create<Int> ({
+//        for (i in 1..10) {
+//            it.onNext(i)
+//        }
+//        it.onComplete()
+//    }, BackpressureStrategy.BUFFER)
+//
+//    flowable.observeOn(Schedulers.io())
+//        .subscribe(subscriber2)
+//
+//    runBlocking { delay(3000) }
 
 
     println(
         """
         
         ******************************
-        
+        옵저버블로 플로어블 만들기
         ******************************
         
     """.trimIndent()
     )
+
+    val source1 = Observable.range(1,500)
+    source1.toFlowable(BackpressureStrategy.DROP)
+        .map { MyItem(it) }
+        .observeOn(Schedulers.io())
+        .subscribe {
+            print("Rec. $it;\t")
+            runBlocking { delay(20) }
+        }
+    runBlocking { delay(5000) }
 
 
     println(
