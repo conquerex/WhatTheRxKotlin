@@ -1,5 +1,8 @@
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.delay
@@ -131,40 +134,131 @@ fun main(args: Array<String>) {
 //        })
 
 
-    Flowable.range(1, 15)
-        .map { MyItem(it) }
-        .observeOn(Schedulers.io())
-        .subscribe(object : Subscriber<MyItem> {
+//    Flowable.range(1, 15)
+//        .map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe(object : Subscriber<MyItem> {
+//
+//            lateinit var subscription: Subscription
+//
+//            override fun onSubscribe(s: Subscription?) {
+//                this.subscription = s!!
+//                subscription.request(5)
+//            }
+//
+//            override fun onNext(t: MyItem?) {
+//                runBlocking {
+//                    delay(50)
+//                }
+//
+//                println("Subscriber received $t")
+//                if (t!!.id == 5) {
+//                    println("Requesting two more")
+//                    subscription.request(2)
+//                }
+//            }
+//
+//            override fun onError(t: Throwable?) {
+//                t!!.printStackTrace()
+//            }
+//
+//            override fun onComplete() {
+//                println("Done!!!")
+//            }
+//        })
+//
+//    runBlocking { delay(2000) }
 
-            lateinit var subscription: Subscription
 
-            override fun onSubscribe(s: Subscription?) {
-                this.subscription = s!!
-                subscription.request(5)
-            }
+    println(
+        """
+        
+        ******************************
+        처음부터 플로어블 생성하기
+        ******************************
+        
+    """.trimIndent()
+    )
 
-            override fun onNext(t: MyItem?) {
-                runBlocking {
-                    delay(50)
-                }
+    val observer2 = object : Observer<Int> {
+        override fun onSubscribe(d: Disposable) {
+            println("[ New Subscription ]")
+        }
 
-                println("Subscriber received $t")
-                if (t!!.id == 5) {
-                    println("Requesting two more")
-                    subscription.request(2)
-                }
-            }
+        override fun onNext(t: Int) {
+            println("Next >> $t")
+        }
 
-            override fun onError(t: Throwable?) {
-                t!!.printStackTrace()
-            }
+        override fun onError(e: Throwable) {
+            println("Error occured >> ${e.message}")
+        }
 
-            override fun onComplete() {
-                println("Done!!!")
-            }
-        })
+        override fun onComplete() {
+            println("All completed")
+        }
+    } // Observer 생성
 
-    runBlocking { delay(2000) }
+    val observable2 = Observable.create<Int> {
+        for (i in 1..10) {
+            it.onNext(i)
+        }
+        it.onComplete()
+    }
+
+//    observable2.subscribe(observer2)
+
+    val subscriber2 = object : Subscriber<Int> {
+        override fun onSubscribe(s: Subscription?) {
+            println("[ New Subscription ]")
+            s!!.request(10)
+        }
+
+        override fun onNext(t: Int) {
+            println("Next >> $t")
+        }
+
+        override fun onError(e: Throwable) {
+            println("Error occured >> ${e.message}")
+        }
+
+        override fun onComplete() {
+            println("All completed")
+        }
+    }
+
+    val flowable = Flowable.create<Int> ({
+        for (i in 1..10) {
+            it.onNext(i)
+        }
+        it.onComplete()
+    }, BackpressureStrategy.BUFFER)
+
+    flowable.observeOn(Schedulers.io())
+        .subscribe(subscriber2)
+
+    runBlocking { delay(3000) }
+
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
+
+
+    println(
+        """
+        
+        ******************************
+        
+        ******************************
+        
+    """.trimIndent()
+    )
 
 
     println(
