@@ -1,14 +1,9 @@
 import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.reactivestreams.Subscriber
-import org.reactivestreams.Subscription
 
 /**
  * @author Jongkook
@@ -249,26 +244,63 @@ fun main(args: Array<String>) {
     """.trimIndent()
     )
 
-    val source1 = Observable.range(1,500)
-    source1.toFlowable(BackpressureStrategy.DROP)
-        .map { MyItem(it) }
-        .observeOn(Schedulers.io())
-        .subscribe {
-            print("Rec. $it;\t")
-            runBlocking { delay(20) }
-        }
-    runBlocking { delay(5000) }
+//    val source1 = Observable.range(1, 500)
+//    source1.toFlowable(BackpressureStrategy.DROP)
+//        .map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe {
+//            print("Rec. $it;\t")
+//            runBlocking { delay(20) }
+//        }
+//    runBlocking { delay(5000) }
 
 
     println(
         """
         
         ******************************
-        
+        BackpressureStrategy.MISSING와 onBackpressureXXX()
         ******************************
         
     """.trimIndent()
     )
+
+//    val source2 = Observable.range(1, 1000)
+//    source2.toFlowable(BackpressureStrategy.MISSING)
+//        .onBackpressureBuffer(20)
+//        .map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe {
+//            println(it)
+//            runBlocking { delay(1000) }
+//        }
+//
+//    runBlocking { delay(600000) }
+
+//    val source2 = Observable.range(1, 1000)
+//    source2.toFlowable(BackpressureStrategy.MISSING)
+//        .onBackpressureDrop { print("Dropped $it;\t") }
+//        .map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe {
+//            println("Rec. $it;\t")
+//            runBlocking { delay(1000) }
+//        }
+//
+//    runBlocking { delay(60000) }
+
+//    val source2 = Observable.range(1, 1000)
+//    source2.toFlowable(BackpressureStrategy.MISSING)
+//        .onBackpressureLatest()
+//        .map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe {
+//            println("--> $it;\t")
+//            runBlocking { delay(100) }
+//        }
+//
+//    runBlocking { delay(60000) }
+
 
 
     println(
