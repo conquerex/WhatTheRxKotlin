@@ -1,4 +1,4 @@
-import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -302,6 +302,29 @@ fun main(args: Array<String>) {
 //    runBlocking { delay(60000) }
 
 
+    println(
+        """
+        
+        ******************************
+        원천에서 백프레셔를 지원하는 플로어블 생성
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val flowable2 = Flowable.generate<Int> {
+        it.onNext(GenerateFlowableItem.item)
+    }
+
+    flowable2.map { MyItem(it) }
+        .observeOn(Schedulers.io())
+        .subscribe {
+            runBlocking { delay(100) }
+            println("Next $it")
+        }
+
+    runBlocking { delay(60000) }
+
 
     println(
         """
@@ -323,17 +346,14 @@ fun main(args: Array<String>) {
         
     """.trimIndent()
     )
+}
 
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
+object GenerateFlowableItem {
+    var item: Int = 0
+        get() {
+            field += 1
+            return field
+        }
 }
 
 data class MyItem(val id: Int) {
