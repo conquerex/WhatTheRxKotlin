@@ -1,5 +1,5 @@
-import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.processors.PublishProcessor
 import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -341,15 +341,15 @@ fun main(args: Array<String>) {
         .toFlowable()
         .publish()
 
-    connectableFlowable.subscribe {
-        println("Subscription 1: $it")
-        runBlocking { delay(1000) }
-        println("Subscription 1 delay")
-    }
-    connectableFlowable.subscribe {
-        println("Subscription 2: $it")
-    }
-    connectableFlowable.connect()
+//    connectableFlowable.subscribe {
+//        println("Subscription 1: $it")
+//        runBlocking { delay(1000) }
+//        println("Subscription 1 delay")
+//    }
+//    connectableFlowable.subscribe {
+//        println("Subscription 2: $it")
+//    }
+//    connectableFlowable.connect()
 
 
     println(
@@ -361,6 +361,20 @@ fun main(args: Array<String>) {
         
     """.trimIndent()
     )
+
+    val flowable3 = listOf("String 1", "String 2", "String 3", "String 4").toFlowable()
+    val processor3 = PublishProcessor.create<String>()
+
+    processor3.subscribe {
+        println("Subscription 1: $it")
+        runBlocking { delay(1000) }
+        println("Subscription 1 delay")
+    }
+    processor3.subscribe {
+        println("Subscription 2: $it")
+    }
+    flowable3.subscribe(processor3)
+
 
 
     println(
