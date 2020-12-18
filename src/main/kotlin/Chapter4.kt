@@ -1,3 +1,4 @@
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.rxkotlin.toFlowable
@@ -5,6 +6,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Jongkook
@@ -365,27 +367,45 @@ fun main(args: Array<String>) {
     val flowable3 = listOf("String 1", "String 2", "String 3", "String 4").toFlowable()
     val processor3 = PublishProcessor.create<String>()
 
-    processor3.subscribe {
-        println("Subscription 1: $it")
-        runBlocking { delay(1000) }
-        println("Subscription 1 delay")
-    }
-    processor3.subscribe {
-        println("Subscription 2: $it")
-    }
-    flowable3.subscribe(processor3)
-
+//    processor3.subscribe {
+//        println("Subscription 1: $it")
+//        runBlocking { delay(1000) }
+//        println("Subscription 1 delay")
+//    }
+//    processor3.subscribe {
+//        println("Subscription 2: $it")
+//    }
+//    flowable3.subscribe(processor3)
 
 
     println(
         """
         
         ******************************
-        
+        buffer() 연산자
         ******************************
         
     """.trimIndent()
     )
+
+//    val flowable4 = Flowable.range(1, 33)
+//    flowable4.buffer(10, 15)
+//        .subscribe { println("Subscription 1 $it") }
+//    flowable4.buffer(15, 7)
+//        .subscribe { println("Subscription 2 $it") }
+
+
+//    val flowable5 = Flowable.interval(100, TimeUnit.MILLISECONDS)
+//    flowable5.buffer(1, TimeUnit.SECONDS)
+//        .subscribe { println(it) }
+//    runBlocking { delay(5000) }
+
+    val boundaryFlowable = Flowable.interval(350, TimeUnit.MILLISECONDS)
+    val flowable5 = Flowable.interval(100, TimeUnit.MILLISECONDS)
+    flowable5.buffer(boundaryFlowable)
+        .subscribe { println(it) }
+    runBlocking { delay(5000) }
+
 
 
     println(
