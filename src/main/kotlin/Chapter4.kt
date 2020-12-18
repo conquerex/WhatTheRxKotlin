@@ -400,23 +400,50 @@ fun main(args: Array<String>) {
 //        .subscribe { println(it) }
 //    runBlocking { delay(5000) }
 
-    val boundaryFlowable = Flowable.interval(350, TimeUnit.MILLISECONDS)
-    val flowable5 = Flowable.interval(100, TimeUnit.MILLISECONDS)
-    flowable5.buffer(boundaryFlowable)
-        .subscribe { println(it) }
-    runBlocking { delay(5000) }
-
+//    val boundaryFlowable = Flowable.interval(350, TimeUnit.MILLISECONDS)
+//    val flowable5 = Flowable.interval(100, TimeUnit.MILLISECONDS)
+//    flowable5.buffer(boundaryFlowable)
+//        .subscribe { println(it) }
+//    runBlocking { delay(5000) }
 
 
     println(
         """
         
         ******************************
-        
+        window() 연산자
         ******************************
         
     """.trimIndent()
     )
+
+//    val flowable6 = Flowable.range(1, 99)
+//    flowable6.window(10)
+//        .subscribe { flo ->
+//            flo.subscribe {
+//                print("$it, ")
+//            }
+//            println()
+//        }
+
+
+    println(
+        """
+        
+        ******************************
+        throttle() 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val flowable7 = Flowable.interval(100, TimeUnit.MILLISECONDS)
+    flowable7.throttleFirst(200, TimeUnit.MILLISECONDS)
+        .subscribe {
+            println(it)
+        }
+    runBlocking { delay(1000) }
+
 }
 
 object GenerateFlowableItem {
