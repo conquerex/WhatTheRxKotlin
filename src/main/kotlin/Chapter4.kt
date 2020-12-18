@@ -1,5 +1,6 @@
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.delay
@@ -312,18 +313,54 @@ fun main(args: Array<String>) {
     """.trimIndent()
     )
 
-    val flowable2 = Flowable.generate<Int> {
-        it.onNext(GenerateFlowableItem.item)
+//    val flowable2 = Flowable.generate<Int> {
+//        it.onNext(GenerateFlowableItem.item)
+//    }
+//
+//    flowable2.map { MyItem(it) }
+//        .observeOn(Schedulers.io())
+//        .subscribe {
+//            runBlocking { delay(100) }
+//            println("Next $it")
+//        }
+//
+//    runBlocking { delay(60000) }
+
+
+    println(
+        """
+        
+        ******************************
+        ConnectableFlowable
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val connectableFlowable = listOf("String 1", "String 2", "String 3", "String 4")
+        .toFlowable()
+        .publish()
+
+    connectableFlowable.subscribe {
+        println("Subscription 1: $it")
+        runBlocking { delay(1000) }
+        println("Subscription 1 delay")
     }
+    connectableFlowable.subscribe {
+        println("Subscription 2: $it")
+    }
+    connectableFlowable.connect()
 
-    flowable2.map { MyItem(it) }
-        .observeOn(Schedulers.io())
-        .subscribe {
-            runBlocking { delay(100) }
-            println("Next $it")
-        }
 
-    runBlocking { delay(60000) }
+    println(
+        """
+        
+        ******************************
+        프로세서 Processor
+        ******************************
+        
+    """.trimIndent()
+    )
 
 
     println(
