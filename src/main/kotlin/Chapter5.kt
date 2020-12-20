@@ -1,4 +1,5 @@
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -78,6 +79,93 @@ fun main(args: Array<String>) {
             it % 2 == 0
         }.subscribe {
             println("Rec $it")
+        }
+
+
+    println(
+        """
+        
+        ******************************
+        first, last 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val observable2 = Observable.range(1, 10)
+    observable2.first(2)
+        .subscribeBy { item -> println("Rec $item") }
+
+    observable2.last(2)
+        .subscribeBy { item -> println("Rec $item") }
+
+    Observable.empty<Int>().first(2)
+        .subscribeBy { item -> println("Rec $item") }
+
+
+
+    println(
+        """
+        
+        ******************************
+        ignoreElements 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val observable3 = Observable.range(1, 10)
+    observable3.ignoreElements()
+        .subscribe { println("Complete!!") }
+
+
+    println(
+        """
+        
+        ******************************
+        map 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val observable4 = listOf(9, 8, 7, 6, 5, 4, 3, 2, 1).toObservable()
+    observable4.map { number ->
+        "Int to String $number"
+    }.subscribe { item ->
+        println("Rec $item")
+    }
+
+
+    println(
+        """
+        
+        ******************************
+        배출 캐스팅 : cast 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    val list5 = listOf<MyItemInherit>(
+        MyItemInherit(1),
+        MyItemInherit(2),
+        MyItemInherit(5),
+        MyItemInherit(6),
+        MyItemInherit(7),
+        MyItemInherit(8)
+    )
+
+    list5.toObservable()
+        .map { it as TestItem }
+        .subscribe { println(it) }
+
+    println("----- cast -----")
+
+    list5.toObservable()
+        .cast(TestItem::class.java)
+        .subscribe {
+            println(it)
         }
 
 
@@ -199,54 +287,18 @@ fun main(args: Array<String>) {
     """.trimIndent()
     )
 
+}
 
+open class TestItem(val id: Int) {
+    override fun toString(): String {
+        return "TestItem >> $id"
+    }
+}
 
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
+class MyItemInherit(id: Int) : TestItem(id) {
+    override fun toString(): String {
+        return "MyItemInherit >> $id"
+    }
 }
 
 inline fun createObservable(): Observable<String> =
