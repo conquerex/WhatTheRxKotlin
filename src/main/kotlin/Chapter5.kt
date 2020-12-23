@@ -254,18 +254,51 @@ fun main(args: Array<String>) {
     """.trimIndent()
     )
 
+    Observable.range(1, 10)
+        .startWith(-1)
+        .subscribe {
+            println("Rec $it")
+        }
+    listOf("a", "bbb", "cc", "ddd", "ee")
+        .toObservable()
+        .startWith("rrr")
+        .subscribe { println("Rec $it") }
+
 
 
     println(
         """
         
         ******************************
-        
+        정렬 연산자: sorted 연산자
         ******************************
         
     """.trimIndent()
     )
 
+    println(">>>> default with integer")
+    listOf(2, 6, 4, 8, 1, 3)
+        .toObservable()
+        .sorted()
+        .subscribe { println("Rec $it") }
+
+    println(">>>> default with String")
+    listOf("c", "d", "bbb", "ee", "aa")
+        .toObservable()
+        .sorted()
+        .subscribe { println("Rec $it") }
+
+    println(">>>> custom sortFunction with integer")
+    listOf(2, 6, 4, 8, 1, 3)
+        .toObservable()
+        .sorted { i, i2 -> if (i > i2) -1 else 1 }
+        .subscribe { println("Rec $it") }
+
+    println(">>>> custom sortFunction with custom class-object")
+    listOf(TheItem(3), TheItem(1), TheItem(5), TheItem(2))
+        .toObservable()
+        .sorted { theItem, theItem2 -> if (theItem.item < theItem2.item) -1 else 1 }
+        .subscribe { println("Rec $it") }
 
 
     println(
@@ -327,6 +360,8 @@ fun main(args: Array<String>) {
     )
 
 }
+
+data class TheItem(val item: Int)
 
 open class TestItem(val id: Int) {
     override fun toString(): String {
