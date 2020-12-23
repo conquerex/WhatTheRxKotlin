@@ -330,11 +330,34 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        배출량 계산 : count 연산자
         ******************************
         
     """.trimIndent()
     )
+
+    listOf(1, 3, 4, 5, 6, 7, 7, 7, 8).toObservable()
+        .count()
+        .subscribeBy { println("count $it") }
+
+
+    println(
+        """
+        
+        ******************************
+        배출 누적 : reduce 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    Observable.range(1, 8)
+        .reduce { t1, t2 -> t1 + t2 }
+        .subscribeBy { println("accumulation $it") }
+
+    Observable.range(1, 4)
+        .reduce { t1, t2 -> t1 * 10 + t2 }
+        .subscribeBy { println("accumulation $it") }
 
 
 
@@ -342,35 +365,20 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        오류 처리 연산자
         ******************************
         
     """.trimIndent()
     )
 
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
+    Observable.just(1, 2, "aaa", 5, 6)
+//        .map { it.toIntOrError() } // 이거 동작 안하는데??
+        .map { it as Int }
+        .subscribeBy(onNext = {
+            println("Next $it")
+        }, onError = {
+            println("Error!! $it")
+        })
 
 }
 
