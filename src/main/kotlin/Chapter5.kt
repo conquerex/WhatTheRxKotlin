@@ -305,11 +305,24 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        데이터 모으기 : scan 연산자
         ******************************
         
     """.trimIndent()
     )
+
+    Observable.range(1, 8)
+        .scan { t1, t2 -> t1 + t2 }
+        .subscribe { println("Rec $it") }
+
+    listOf("c", "d", "bbb", "ee", "aa")
+        .toObservable()
+        .scan { t1, t2 -> "$t1 $t2" }
+        .subscribe { println("Rec $it") }
+
+    Observable.range(1, 5)
+        .scan { t1, t2 -> t1 * 10 + t2 }
+        .subscribe { println("Rec $it") }
 
 
 
