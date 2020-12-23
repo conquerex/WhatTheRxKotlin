@@ -173,43 +173,82 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        flatMap 연산자
         ******************************
         
     """.trimIndent()
     )
 
+    val observable5 = listOf(8, 7, 6, 5, 4, 3, 2, 1).toObservable()
+    observable5.flatMap { number ->
+        Observable.just("Int to String $number")
+    }.subscribe { item ->
+        println("Rec $item")
+    }
+
+    val observable6 = listOf(8, 7, 6, 5, 4, 3, 2, 1).toObservable()
+    observable6.flatMap { number ->
+        Observable.create<String> {
+            it.onNext("The number $number")
+            it.onNext("number/2 ${number / 2}")
+            it.onComplete()
+        }
+    }.subscribeBy(
+        onNext = { item ->
+            println("Rec $item")
+        }, onComplete = {
+            println("Complete!!!")
+        }
+    )
 
 
     println(
         """
         
         ******************************
-        
+        defaultIfEmpty 연산자
         ******************************
         
     """.trimIndent()
     )
 
+    Observable.range(0, 10)
+        .filter { it > 15 }
+        .subscribe {
+            println("Rec $it")
+        }
+
+    Observable.range(0, 10)
+        .filter { it > 15 }
+        .defaultIfEmpty(15)
+        .subscribe {
+            println("Rec $it")
+        }
 
 
     println(
         """
         
         ******************************
-        
+        switchIfEmpty 연산자
         ******************************
         
     """.trimIndent()
     )
 
+    Observable.range(0, 10)
+        .filter { it > 15 }
+        .switchIfEmpty(Observable.range(11, 10))
+        .subscribe {
+            println("Rec $it")
+        }
 
 
     println(
         """
         
         ******************************
-        
+        startWith 연산자
         ******************************
         
     """.trimIndent()
