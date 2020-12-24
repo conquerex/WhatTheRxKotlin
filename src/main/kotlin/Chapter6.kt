@@ -1,6 +1,9 @@
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.toObservable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Jongkook
@@ -62,13 +65,27 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        combineLatest 연산자
         ******************************
         
     """.trimIndent()
     )
 
+//    val observable5 = Observable.interval(100, TimeUnit.MILLISECONDS)
+//    val observable6 = Observable.interval(250, TimeUnit.MILLISECONDS)
+//
+//    Observable.zip(observable5, observable6, BiFunction { t1, t2 -> "$t1 $t2" })
+//        .subscribe { println("Rec $it") }
+//
+//    runBlocking { delay(1100) }
 
+    val observable5 = Observable.interval(100, TimeUnit.MILLISECONDS)
+    val observable6 = Observable.interval(250, TimeUnit.MILLISECONDS)
+
+    Observable.combineLatest(observable5, observable6, BiFunction { t1, t2 -> "$t1 $t2" })
+        .subscribe { println("Rec $it") }
+
+    runBlocking { delay(1100) }
 
 
     println(
