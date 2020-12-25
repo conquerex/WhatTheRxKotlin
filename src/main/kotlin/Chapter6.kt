@@ -243,17 +243,46 @@ fun main(args: Array<String>) {
 
 
 
-
     println(
         """
         
         ******************************
-        
+        switchMap 연산자 이해
         ******************************
         
     """.trimIndent()
     )
 
+//    Observable.range(1, 10)
+//        .switchMap {
+//            val randDelay = Random.nextInt(10)
+//            return@switchMap Observable.just(it)
+//        }.blockingSubscribe {
+//            println("Rec $it")
+//        }
+//
+//    println("--- with delay ---")
+//
+//    Observable.range(1, 10)
+//        .switchMap {
+//            val randDelay = Random.nextInt(10)
+//            return@switchMap Observable.just(it)
+//                .delay(randDelay.toLong(), TimeUnit.MILLISECONDS)
+//        }.blockingSubscribe {
+//            println("Rec $it")
+//        }
+
+    Observable.range(1, 10)
+        .switchMap {
+            val randDelay = Random.nextInt(10)
+            if (it % 3 == 0)
+                Observable.just(it)
+            else
+                Observable.just(it)
+                    .delay(randDelay.toLong(), TimeUnit.MILLISECONDS)
+        }.blockingSubscribe {
+            println("Rec $it")
+        }
 
 
 
