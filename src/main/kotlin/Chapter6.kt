@@ -1,9 +1,8 @@
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.toObservable
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 /**
  * @author Jongkook
@@ -189,34 +188,58 @@ fun main(args: Array<String>) {
             "Observable 2 > $it"
         }
 
-    Observable.amb(listOf(ob5, ob6))
-        .subscribe { println("Rec $it") }
-    runBlocking { delay(1500) }
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
+//    Observable.amb(listOf(ob5, ob6))
+//        .subscribe { println("Rec $it") }
+//    runBlocking { delay(1500) }
 
 
     println(
         """
         
         ******************************
-        
+        그룹핑        
         ******************************
         
     """.trimIndent()
     )
+
+    val ob7 = Observable.range(1, 20)
+    ob7.groupBy { it % 5 }
+        .blockingSubscribe {
+            println("Key ${it.key} ")
+            it.subscribe { println("Rec --> $it") }
+        }
+
+
+    println(
+        """
+        
+        ******************************
+        flatMap, concatMap 세부 사항
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    Observable.range(1, 10)
+        .flatMap {
+            val randDelay = Random.nextInt(10)
+            return@flatMap Observable.just(it)
+                .delay(randDelay.toLong(), TimeUnit.MILLISECONDS)
+        }.blockingSubscribe {
+            println("Rec $it")
+        }
+
+    println("----")
+
+    Observable.range(1, 10)
+        .concatMap {
+            val randDelay = Random.nextInt(10)
+            return@concatMap Observable.just(it)
+                .delay(randDelay.toLong(), TimeUnit.MILLISECONDS)
+        }.blockingSubscribe {
+            println("Rec $it")
+        }
 
 
 
