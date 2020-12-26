@@ -1,6 +1,10 @@
 import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.toObservable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
@@ -290,13 +294,117 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        배출 건너뛰기 (skip, skipLast, skipUntil, skipWhile)
         ******************************
         
     """.trimIndent()
     )
 
+//    val obs1 = Observable.range(1, 10)
+//    obs1.skip(5)
+//        .subscribe(object : Observer<Int> {
+//            override fun onSubscribe(d: Disposable) {
+//                println(">>>>> starting skip(count)")
+//            }
+//
+//            override fun onNext(t: Int) {
+//                println("Rec $t")
+//            }
+//
+//            override fun onError(e: Throwable) {
+//                println("Error $e")
+//            }
+//
+//            override fun onComplete() {
+//                println("Complete <<<<")
+//            }
+//        })
+//
+//    val obs2 = Observable.interval(100, TimeUnit.MILLISECONDS)
+//    obs2.skip(400, TimeUnit.MILLISECONDS)
+//        .subscribe(object : Observer<Long> {
+//            override fun onSubscribe(d: Disposable) {
+//                println(">>>>> starting skip(time)")
+//            }
+//
+//            override fun onNext(t: Long) {
+//                println("Rec $t")
+//            }
+//
+//            override fun onError(e: Throwable) {
+//                println("Error $e")
+//            }
+//
+//            override fun onComplete() {
+//                println("Complete <<<<")
+//            }
+//        })
 
+//    runBlocking { delay(1000) }
+//
+//    val obs3 = Observable.range(1, 10)
+//    obs3.skipLast(5)
+//        .subscribe(object : Observer<Int> {
+//            override fun onSubscribe(d: Disposable) {
+//                println(">>>>> starting skipLast(count)")
+//            }
+//
+//            override fun onNext(t: Int) {
+//                println("Rec $t")
+//            }
+//
+//            override fun onError(e: Throwable) {
+//                println("Error $e")
+//            }
+//
+//            override fun onComplete() {
+//                println("Complete <<<<")
+//            }
+//        })
+//
+//    val obs4 = Observable.range(1, 10)
+//    obs4.skipWhile { item -> item < 3 }
+//        .subscribe(object : Observer<Int> {
+//            override fun onSubscribe(d: Disposable) {
+//                println(">>>>> starting skipWhile(count)")
+//            }
+//
+//            override fun onNext(t: Int) {
+//                println("Rec $t")
+//            }
+//
+//            override fun onError(e: Throwable) {
+//                println("Error $e")
+//            }
+//
+//            override fun onComplete() {
+//                println("Complete <<<<")
+//            }
+//        })
+
+    val obs5 = Observable.interval(100, TimeUnit.MILLISECONDS)
+    val obs6 = Observable.timer(400, TimeUnit.MILLISECONDS)
+
+    obs5.skipUntil(obs6)
+        .subscribe(object : Observer<Long> {
+            override fun onSubscribe(d: Disposable) {
+                println(">>>>> starting skipUntil")
+            }
+
+            override fun onNext(t: Long) {
+                println("Received $t")
+            }
+
+            override fun onError(e: Throwable) {
+                println("Error $e")
+            }
+
+            override fun onComplete() {
+                println("Complete <<<<")
+            }
+        })
+
+    runBlocking { delay(1200) }
 
 
     println(
