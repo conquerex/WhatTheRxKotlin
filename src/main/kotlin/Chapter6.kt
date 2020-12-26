@@ -2,6 +2,7 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -503,26 +504,59 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        에러 처리 연산자
         ******************************
         
     """.trimIndent()
     )
 
+//    Observable.just(1, 2, 3, 4, 5)
+//        .map { it / (3 - it) }
+//        .subscribe { println("Rec -- $it") }
 
+//    Observable.just(1, 2, 3, 4, 5)
+//        .map { it / (3 - it) }
+//        .onErrorReturn { -1 }
+//        .subscribe { println("Rec -- $it") }
+//
+//    Observable.just(1, 2, 3, 4, 5)
+//        .map { it / (3 - it) }
+//        .onErrorResumeNext(Observable.range(10, 5))
+//        .subscribe { println("Rec -- $it") }
+
+    Observable.just(1, 2, 3, 4, 5)
+        .map { it / (3 - it) }
+        .retry(3)
+        .subscribeBy(
+            onNext = { println("Rec -- $it") },
+            onError = { println("Error") }
+        )
+
+    println("\n ===== With predicate ===== \n")
+
+    var retryCount = 0;
+    Observable.just(1, 2, 3, 4, 5)
+        .map { it / (3 - it) }
+        .retry { _, _ ->
+            (++retryCount) < 3
+        }
+        .subscribeBy(
+            onNext = { println("Rec -- $it") },
+            onError = { println("Error") }
+        )
 
 
     println(
         """
         
         ******************************
-        
+        HTTP 예제
         ******************************
         
     """.trimIndent()
     )
 
-
+    
 
 
     println(
