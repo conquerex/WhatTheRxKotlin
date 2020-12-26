@@ -18,5 +18,8 @@ dependencies {
     // kotlinx.coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
 
+    // RxJava-Apache-HTTP
+    implementation 'com.netflix.rxjava:rxjava-apache-http:0.20.7'
+
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
 }

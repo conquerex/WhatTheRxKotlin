@@ -4,6 +4,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
+import org.apache.http.impl.nio.client.HttpAsyncClients
+import org.apache.http.nio.client.HttpAsyncClient
+import rx.apache.http.ObservableHttp
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
@@ -556,81 +559,15 @@ fun main(args: Array<String>) {
     """.trimIndent()
     )
 
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
+    val httpClient = HttpAsyncClients.createDefault()
+    httpClient.start()
+    ObservableHttp.createGet("https://jsonplaceholder.typicode.com/posts/1/comments", httpClient)
+        .toObservable()
+        .flatMap { response ->
+            response.content.map { bytes -> String(bytes) }
+        }.onErrorReturn { "Error Parsing data" }
+        .subscribe {
+            println(it)
+            httpClient.close()
+        }
 }
