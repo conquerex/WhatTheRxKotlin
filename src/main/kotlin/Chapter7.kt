@@ -1,7 +1,10 @@
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.Executors
 
 /**
  * @author Jongkook
@@ -54,11 +57,36 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        Schedulers.trampoline()
         ******************************
         
     """.trimIndent()
     )
+
+//    GlobalScope.async {
+//        Observable.range(1, 10)
+////            .subscribeOn(Schedulers.single())
+//            .subscribeOn(Schedulers.trampoline())
+//            .subscribe {
+//                runBlocking { delay(200) }
+//                println("Obs1 item rec $it")
+//            }
+//
+//        Observable.range(21, 10)
+////            .subscribeOn(Schedulers.single())
+//            .subscribeOn(Schedulers.trampoline())
+//            .subscribe {
+//                runBlocking { delay(100) }
+//                println("Obs2 item rec $it")
+//            }
+//
+//        for (i in 1..10) {
+//            delay(100)
+//            println("Blocking thread $i")
+//        }
+//    }
+//
+//    runBlocking { delay(6000) }
 
 
 
@@ -66,11 +94,38 @@ fun main(args: Array<String>) {
         """
         
         ******************************
-        
+        Schedulers.from
         ******************************
         
     """.trimIndent()
     )
+
+    val executor = Executors.newFixedThreadPool(2)
+    val scheduler = Schedulers.from(executor)
+
+    Observable.range(1, 10)
+        .subscribeOn(scheduler)
+        .subscribe {
+            runBlocking { delay(200) }
+            println("Obs1 item rec $it >> ${Thread.currentThread().name}")
+        }
+
+    Observable.range(21, 10)
+        .subscribeOn(scheduler)
+        .subscribe {
+            runBlocking { delay(100) }
+            println("Obs2 item rec $it >> ${Thread.currentThread().name}")
+        }
+
+    Observable.range(51, 10)
+        .subscribeOn(scheduler)
+        .subscribe {
+            runBlocking { delay(100) }
+            println("Obs3 item rec $it >> ${Thread.currentThread().name}")
+        }
+
+    runBlocking { delay(5000) }
+
 
 
 
