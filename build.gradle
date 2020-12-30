@@ -22,4 +22,9 @@ dependencies {
     implementation 'com.netflix.rxjava:rxjava-apache-http:0.20.7'
 
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+
+    // Test
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.3'
+    testImplementation 'org.mockito:mockito-core:3.6.28'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5:1.4.30-M1'
 }
