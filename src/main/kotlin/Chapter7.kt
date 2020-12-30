@@ -1,7 +1,5 @@
-import io.reactivex.Observable
+import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Executors
@@ -89,7 +87,6 @@ fun main(args: Array<String>) {
 //    runBlocking { delay(6000) }
 
 
-
     println(
         """
         
@@ -103,171 +100,84 @@ fun main(args: Array<String>) {
     val executor = Executors.newFixedThreadPool(2)
     val scheduler = Schedulers.from(executor)
 
-    Observable.range(1, 10)
-        .subscribeOn(scheduler)
-        .subscribe {
-            runBlocking { delay(200) }
-            println("Obs1 item rec $it >> ${Thread.currentThread().name}")
+//    Observable.range(1, 10)
+//        .subscribeOn(scheduler)
+//        .subscribe {
+//            runBlocking { delay(200) }
+//            println("Obs1 item rec $it >> ${Thread.currentThread().name}")
+//        }
+//
+//    Observable.range(21, 10)
+//        .subscribeOn(scheduler)
+//        .subscribe {
+//            runBlocking { delay(100) }
+//            println("Obs2 item rec $it >> ${Thread.currentThread().name}")
+//        }
+//
+//    Observable.range(51, 10)
+//        .subscribeOn(scheduler)
+//        .subscribe {
+//            runBlocking { delay(100) }
+//            println("Obs3 item rec $it >> ${Thread.currentThread().name}")
+//        }
+//
+//    runBlocking { delay(5000) }
+
+
+    println(
+        """
+        
+        ******************************
+        구독 시 스레드 변경 : subscribeOn 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    listOf("1", "2", "3", "4", "6")
+        .toObservable()
+        .map { item ->
+            println("mapping $item -- ${Thread.currentThread().name}")
+            return@map item.toInt()
+        }.subscribe { item ->
+            println("rec $item >> ${Thread.currentThread().name}")
         }
 
-    Observable.range(21, 10)
-        .subscribeOn(scheduler)
+    listOf("0", "2", "3", "4", "6")
+        .toObservable()
+        .map {
+            println("mapping $it -- ${Thread.currentThread().name}")
+            return@map it.toInt()
+        }.subscribeOn(Schedulers.computation())
         .subscribe {
-            runBlocking { delay(100) }
-            println("Obs2 item rec $it >> ${Thread.currentThread().name}")
+            println("rec $it >> ${Thread.currentThread().name}")
         }
 
-    Observable.range(51, 10)
-        .subscribeOn(scheduler)
+    runBlocking { delay(1000) }
+
+
+    println(
+        """
+        
+        ******************************
+        다른 스레드에서 관찰 : observeOn 연산자
+        ******************************
+        
+    """.trimIndent()
+    )
+
+    listOf("1", "2", "3", "4", "6")
+        .toObservable()
+        .observeOn(Schedulers.computation())
+        .map {
+            println("mapping $it -- ${Thread.currentThread().name}")
+            return@map it.toInt()
+        }
+        .observeOn(Schedulers.io())
         .subscribe {
-            runBlocking { delay(100) }
-            println("Obs3 item rec $it >> ${Thread.currentThread().name}")
+            println("rec $it >> ${Thread.currentThread().name}")
         }
 
-    runBlocking { delay(5000) }
+    runBlocking { delay(1000) }
 
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
-
-
-
-    println(
-        """
-        
-        ******************************
-        
-        ******************************
-        
-    """.trimIndent()
-    )
 }
