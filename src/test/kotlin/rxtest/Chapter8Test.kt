@@ -1,6 +1,9 @@
 package rxtest
 
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 import kotlin.test.*
 
@@ -44,5 +47,16 @@ internal class Chapter8Test {
     @Test
     fun assertThatPassedValueIsNull() {
         assertNull(null)
+    }
+
+    @Test
+    fun checkEmissionsCount() {
+        val emissionsCount = AtomicInteger()
+        Observable.range(1, 10)
+            .subscribeOn(Schedulers.computation())
+            .blockingSubscribe {
+                emissionsCount.incrementAndGet()
+            }
+        assertEquals(10, emissionsCount.get())
     }
 }
