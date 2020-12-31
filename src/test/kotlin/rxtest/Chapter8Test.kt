@@ -87,4 +87,32 @@ internal class Chapter8Test {
         assertEquals(3, firstItem)
     }
 
+    @Test
+    fun testWithBlockingLast() {
+        val observable = listOf(3, 6, 4, 11, 8, 9).toObservable()
+            .sorted()
+        val firstItem = observable.blockingLast()
+        assertEquals(11, firstItem)
+    }
+
+    @Test
+    fun testWithBlockingIterable() {
+        val list = listOf(3, 6, 4, 11, 8, 9)
+        val observable = list.toObservable().sorted()
+
+        val iterable = observable.blockingIterable()
+        assertEquals(list.sorted(), iterable.toList())
+    }
+
+    @Test
+    fun testWithBlockingForEach() {
+        val list = listOf(5, 4, 3, 6, 7, 8, 1, 2, 11, 14, 13, 12, 9, 10)
+        val observable = list.toObservable().filter {
+            it % 2 == 0
+        }
+        observable.forEach {
+            assertTrue(it % 2 == 0)
+        }
+    }
+
 }
