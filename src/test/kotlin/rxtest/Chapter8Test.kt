@@ -1,6 +1,7 @@
 package rxtest
 
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -59,4 +60,31 @@ internal class Chapter8Test {
             }
         assertEquals(10, emissionsCount.get())
     }
+
+    @Test
+    fun testWithBlickingFirst() {
+        val observable = listOf(3, 6, 4, 11, 8, 9).toObservable()
+            .sorted()
+        val firstItem = observable.blockingFirst()
+        assertEquals(3, firstItem)
+    }
+
+    @Test
+    fun testSingleWithBlockingGet() {
+        val observable = listOf(3, 6, 4, 11, 8, 9).toObservable()
+            .sorted()
+        val firstElement = observable.first(0)
+        val firstItem = firstElement.blockingGet()
+        assertEquals(3, firstItem)
+    }
+
+    @Test
+    fun testMaybeWithBlockingGet() {
+        val observable = listOf(3, 6, 4, 11, 8, 9).toObservable()
+            .sorted()
+        val firstElement = observable.firstElement()
+        val firstItem = firstElement.blockingGet()
+        assertEquals(3, firstItem)
+    }
+
 }
