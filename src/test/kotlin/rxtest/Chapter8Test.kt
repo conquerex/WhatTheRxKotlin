@@ -1,8 +1,11 @@
 package rxtest
 
 import io.reactivex.Observable
+import io.reactivex.observers.TestObserver
+import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subscribers.TestSubscriber
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
@@ -113,6 +116,50 @@ internal class Chapter8Test {
         observable.forEach {
             assertTrue(it % 2 == 0)
         }
+    }
+
+    @Test
+    fun testWithTestObserver() {
+        val list = listOf(5, 4, 3, 6, 7, 8, 1, 2, 11, 14, 13, 12, 9, 10)
+        val observable = list.toObservable().sorted()
+
+        val testObserver = TestObserver<Int>()
+
+        // Observable을 구독
+        observable.subscribe(testObserver)
+
+        // 구독이 성공적이었는지 테스트를 통해 검증
+        testObserver.assertSubscribed()
+
+        // Observable이 실행을 완료할 때까지 스레드를 차단
+        // 이 최종(터미널) 이벤트는 onComplete 또는 onError 일 수 있다.
+        testObserver.awaitTerminalEvent()
+        // 구독중에 오류가 발생하지 않았는지를 테스트
+        testObserver.assertNoErrors()
+        // 프로듀서가 성공적으로 완료됐는지 테스트
+        testObserver.assertComplete()
+        // 수신한 전체 배출이 14개인지 테스트 (목록에 14개 항목이 있음)
+        testObserver.assertValueCount(14)
+        // 각 배출의 예상 값과 실제 값을 순서대로 테스트
+        testObserver.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
+    }
+
+    @Test
+    fun testWithTestSubscriber() {
+        val list = listOf(5, 4, 3, 6, 7, 8, 1, 2, 11, 14, 13, 12, 9, 10)
+        val flowable = list.toFlowable().sorted()
+
+        val testSubscriber = TestSubscriber<Int>()
+
+        flowable.subscribe(testSubscriber)
+
+        testSubscriber.assertSubscribed()
+
+        testSubscriber.awaitTerminalEvent()
+        testSubscriber.assertNoErrors()
+        testSubscriber.assertComplete()
+        testSubscriber.assertValueCount(14)
+        testSubscriber.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
     }
 
 }
