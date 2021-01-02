@@ -5,8 +5,10 @@ import io.reactivex.observers.TestObserver
 import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 import kotlin.test.*
@@ -160,6 +162,28 @@ internal class Chapter8Test {
         testSubscriber.assertComplete()
         testSubscriber.assertValueCount(14)
         testSubscriber.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
+    }
+
+    @Test
+    fun testByFastForwardingTime() {
+        val testScheduler = TestScheduler()
+        val observable = Observable.interval(5, TimeUnit.MINUTES, testScheduler)
+        val testObserver = TestObserver<Long>()
+
+        observable.subscribe(testObserver)
+        testObserver.assertSubscribed()
+        // 배출물이 하나도 존재해서는 안됨
+        // 최초 배출까지 5분이 남았으므로
+        testObserver.assertValueCount(0)
+
+        // 100분을 빨리 감기
+        testScheduler.advanceTimeBy(100, TimeUnit.MINUTES)
+        // 20개의 배출을 받았는지 테스트
+        testObserver.assertValueCount(20)
+
+        testScheduler.advanceTimeBy(400, TimeUnit.MINUTES)
+        // 100 + 400 = 500분 --> 100개 배출
+        testObserver.assertValueCount(100)
     }
 
 }
